@@ -1,13 +1,14 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { X } from 'lucide-react'
 import { ChangeEvent, FormEvent, FormEventHandler, useState } from 'react'
-import { toast } from 'sonner'
+import { Toaster, toast } from 'sonner'
 export type NewNoteCardProps = {
   onNoteCreated: (content: string) => void
 }
 export function NoteNewCard({ onNoteCreated }: NewNoteCardProps) {
   const [shouldShowOnboarding, setShouldShowOnboarding] = useState(true)
   const [content, setContent] = useState('')
+  const [isRecording, setIsRecording] = useState<boolean>(false)
 
   const handleStartEditor = () => {
     setShouldShowOnboarding((prev) => !prev)
@@ -15,18 +16,30 @@ export function NoteNewCard({ onNoteCreated }: NewNoteCardProps) {
 
   const handleContentChanged = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setContent(event.target.value)
-    console.log()
     if (event.target.value === '') {
       setShouldShowOnboarding(true)
     }
   }
 
-  const handleSubmitNote = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmitNote = (event: FormEvent) => {
     event.preventDefault()
+
+    if (content === '') {
+      return toast.error('A note deve ter no minimo 10 caracteres!')
+    }
+
     onNoteCreated(content)
     setContent('')
     setShouldShowOnboarding(true)
     toast.success('Nota criada com sucesso!')
+  }
+
+  const handleStartRecord = () => {
+    setIsRecording(true)
+  }
+
+  const handleStopRecording = () => {
+    setIsRecording(false)
   }
 
   return (
@@ -50,22 +63,23 @@ export function NoteNewCard({ onNoteCreated }: NewNoteCardProps) {
             <X className="size-5 hover:text-slate-100" />
           </Dialog.DialogClose>
 
-          <form
-            action=""
-            onSubmit={(event) => handleSubmitNote(event)}
-            className="flex-1 flex flex-col"
-          >
+          <form action="" className="flex-1 flex flex-col">
             <div className="flex flex-1 flex-col gap-3 p-5">
               <span className=" text-sm text-slate-300">Adicionar nota</span>
 
               {shouldShowOnboarding ? (
                 <p className="text-sm leading-6 text-slate-400">
                   Comece{' '}
-                  <button className="hover:underline font-medium text-lime-400">
+                  <button
+                    type="button"
+                    onClick={handleStartRecord}
+                    className="hover:underline font-medium text-lime-400"
+                  >
                     gravando uma nota
                   </button>{' '}
                   em áudio ou se preferir{' '}
                   <button
+                    type="button"
                     onClick={handleStartEditor}
                     className="hover:underline font-medium text-lime-400"
                   >
@@ -84,12 +98,24 @@ export function NoteNewCard({ onNoteCreated }: NewNoteCardProps) {
               )}
             </div>
 
-            <button
-              type="submit"
-              className="w-full bg-lime-400 py-4 text-center text-sm text-lime-950 outline-none font-semibold hover:bg-lime-500"
-            >
-              Salvar nota
-            </button>
+            {isRecording ? (
+              <button
+                onClick={handleStopRecording}
+                type="button"
+                className="w-full flex items-center justify-center gap-2  bg-slate-900 py-4 text-center text-sm text-slate-300 outline-none font-semibold hover:text-slate-100"
+              >
+                <div className="size-2 rounded-full bg-red-500 animate-pulse" />
+                Gravando! (clique p/ interromper)
+              </button>
+            ) : (
+              <button
+                onClick={handleSubmitNote}
+                type="button"
+                className="w-full bg-lime-400 py-4 text-center text-sm text-lime-950 outline-none font-semibold hover:bg-lime-500"
+              >
+                Salvar nota
+              </button>
+            )}
           </form>
         </Dialog.Content>
       </Dialog.Portal>
