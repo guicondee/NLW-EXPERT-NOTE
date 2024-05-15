@@ -15,6 +15,7 @@ export function NoteNewCard({ onNoteCreated }: NewNoteCardProps) {
 
   const handleContentChanged = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setContent(event.target.value)
+    console.log()
     if (event.target.value === '') {
       setShouldShowOnboarding(true)
     }
