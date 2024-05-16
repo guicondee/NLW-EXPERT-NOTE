@@ -39,6 +39,12 @@ export function App() {
     setSearch(query)
   }
 
+  const onRemoveNote = (id: string) => {
+    const notesArray = notes.filter((note) => note.id !== id)
+    setNotes(notesArray)
+    localStorage.setItem('notes', JSON.stringify(notesArray))
+  }
+
   const filteredNotes =
     search !== ''
       ? notes.filter((value) =>
@@ -47,13 +53,13 @@ export function App() {
       : notes
 
   return (
-    <div className="mx-auto max-w-6xl my-12 space-y-6">
+    <div className="mx-auto max-w-6xl my-12 space-y-6 lg:px-0 md:px-5 px-5">
       <img src={logo} alt="nlw expert" />
 
       <form className="w-full">
         <input
           onChange={handleSearchNotes}
-          className="outline-none w-full bg-transparent text-3xl font-semibold tracking-tighter placeholder:text-slate-500" //propiedade tracking-thiger perfeita para ajustar font
+          className="outline-none w-full bg-transparent text-2xl md:text-3xl lg:text-3xl font-semibold tracking-tighter placeholder:text-slate-500" //propiedade tracking-thiger perfeita para ajustar font
           type="text"
           placeholder="Busque em suas notas..."
         />
@@ -61,7 +67,7 @@ export function App() {
 
       <div className="h-px bg-slate-700" />
 
-      <div className="grid gap-6 grid-cols-3 auto-rows-[250px]">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 grid-cols-1 auto-rows-[250px] ">
         <NoteNewCard onNoteCreated={onNoteCreated} />
         {filteredNotes.map((value) => (
           <NoteCard
@@ -71,6 +77,7 @@ export function App() {
               content: value.content,
               date: value.date,
             }}
+            onRemoveNote={onRemoveNote}
           />
         ))}
       </div>
