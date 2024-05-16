@@ -9,9 +9,10 @@ export type NoteCardProps = {
     date: Date
     content: string
   }
+  onRemoveNote: (id: string) => void
 }
 
-export function NoteCard({ note }: NoteCardProps) {
+export function NoteCard({ note, onRemoveNote }: NoteCardProps) {
   return (
     <>
       <Dialog.Root>
@@ -30,7 +31,7 @@ export function NoteCard({ note }: NoteCardProps) {
 
         <Dialog.Portal>
           <Dialog.Overlay className="inset-0 fixed bg-black/50" />
-          <Dialog.Content className="overflow-hidden fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 max-w-[640px] w-full h-[60vh] bg-slate-700 outline-none rounded-md flex flex-col">
+          <Dialog.Content className="overflow-hidden fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 lg:max-w-[640px] md:max-w-[640px] max-w-[380px] w-full lg:h-[60vh] h-[40vh] md:h-[60vh] bg-slate-700 outline-none rounded-md flex flex-col">
             <Dialog.DialogClose className="absolute right-0 top-0 bg-slate-800 p-[6px] text-slate-400">
               <X className="size-5 hover:text-slate-100" />
             </Dialog.DialogClose>
@@ -47,6 +48,7 @@ export function NoteCard({ note }: NoteCardProps) {
             </div>
 
             <button
+              onClick={() => onRemoveNote(note.id)}
               type="submit"
               className="w-full bg-slate-800 py-4 text-center text-sm text-slate-300 outline-none font-medium group"
             >
